@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="en" dir="ltr">
+<html lang="ar" dir="rtl">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <title>Bet Pattern Generator</title>
+  <title>مولّد أنماط الرهانات</title>
   <style>
     :root{
       --bg:#020617;--bg-alt:#020817;--panel:#050816;--panel-soft:#0b1220;
@@ -11,54 +11,230 @@
       --muted:#9ca3af;--text:#e5e7eb;--badge-bg:rgba(34,197,94,0.14);
     }
     *{box-sizing:border-box;}
-    html,body{margin:0;height:100%;background:radial-gradient(circle at top,#0b1120,#020617 55%,#000 100%);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;-webkit-font-smoothing:antialiased;}
-    body::before{content:"";position:fixed;inset:0;background-image:linear-gradient(90deg,rgba(148,163,184,0.06) 1px,transparent 1px),linear-gradient(180deg,rgba(148,163,184,0.06) 1px,transparent 1px);background-size:40px 40px;opacity:.55;pointer-events:none;z-index:-2;}
-    body::after{content:"";position:fixed;width:520px;height:520px;background:radial-gradient(circle,rgba(34,197,94,0.22),transparent 65%);top:-120px;left:50%;transform:translateX(-50%);filter:blur(8px);opacity:.7;z-index:-2;pointer-events:none;}
-    .wrap{min-height:100%;display:flex;justify-content:center;align-items:flex-start;padding:12px;}
-    .panel{width:100%;max-width:460px;border-radius:18px;padding:14px 14px 10px;background:radial-gradient(circle at top,#020617,#020617 55%,#000 100%);border:1px solid rgba(148,163,184,0.35);box-shadow:0 24px 80px rgba(0,0,0,.95),0 0 0 1px rgba(15,23,42,0.9),0 0 22px rgba(34,197,94,0.18);position:relative;overflow:hidden;}
-    .panel::before{content:"";position:absolute;inset:1px;border-radius:16px;background:radial-gradient(circle at 0 0,rgba(34,197,94,0.12),transparent 60%),radial-gradient(circle at 100% 100%,rgba(56,189,248,0.16),transparent 55%);opacity:.9;pointer-events:none;z-index:-1;}
+    html,body{
+      margin:0;height:100%;
+      background:radial-gradient(circle at top,#0b1120,#020617 55%,#000 100%);
+      color:var(--text);
+      font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+      -webkit-font-smoothing:antialiased;
+    }
+    body::before{
+      content:"";position:fixed;inset:0;
+      background-image:
+        linear-gradient(90deg,rgba(148,163,184,0.06) 1px,transparent 1px),
+        linear-gradient(180deg,rgba(148,163,184,0.06) 1px,transparent 1px);
+      background-size:40px 40px;
+      opacity:.55;pointer-events:none;z-index:-2;
+    }
+    body::after{
+      content:"";position:fixed;width:520px;height:520px;
+      background:radial-gradient(circle,rgba(34,197,94,0.22),transparent 65%);
+      top:-120px;left:50%;transform:translateX(-50%);
+      filter:blur(8px);opacity:.7;z-index:-2;pointer-events:none;
+    }
+    .wrap{
+      min-height:100%;display:flex;justify-content:center;align-items:flex-start;padding:12px;
+    }
+    .panel{
+      width:100%;max-width:460px;border-radius:18px;
+      padding:14px 14px 10px;
+      background:radial-gradient(circle at top,#020617,#020617 55%,#000 100%);
+      border:1px solid rgba(148,163,184,0.35);
+      box-shadow:0 24px 80px rgba(0,0,0,.95),
+                 0 0 0 1px rgba(15,23,42,0.9),
+                 0 0 22px rgba(34,197,94,0.18);
+      position:relative;overflow:hidden;
+    }
+    .panel::before{
+      content:"";position:absolute;inset:1px;border-radius:16px;
+      background:
+        radial-gradient(circle at 0 0,rgba(34,197,94,0.12),transparent 60%),
+        radial-gradient(circle at 100% 100%,rgba(56,189,248,0.16),transparent 55%);
+      opacity:.9;pointer-events:none;z-index:-1;
+    }
     .panel-inner{position:relative;z-index:1;}
-    .top-row{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px;}
-    h1{margin:0;font-size:18px;color:var(--accent-strong);letter-spacing:.03em;display:flex;align-items:center;gap:6px;}
-    .cipher-dot{width:7px;height:7px;border-radius:999px;background:var(--accent);box-shadow:0 0 12px rgba(34,197,94,0.9);animation:pulse-dot 1.4s infinite;}
-    @keyframes pulse-dot{0%{transform:scale(1);opacity:0.9}50%{transform:scale(1.4);opacity:0.3}100%{transform:scale(1);opacity:0.9}}
-    .status-pill{display:inline-flex;align-items:center;gap:6px;padding:4px 9px;border-radius:999px;border:1px solid rgba(148,163,184,0.4);background:linear-gradient(135deg,rgba(15,23,42,0.9),rgba(15,23,42,0.6));font-size:11px;color:var(--muted);}
-    .status-dot{width:8px;height:8px;border-radius:999px;background:var(--accent);box-shadow:0 0 10px rgba(34,197,94,0.9);}
-    .subtitle{font-size:12px;color:var(--muted);margin-top:2px;line-height:1.6;}
-    .controls{margin-top:12px;display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;}
-    label{font-size:12px;font-weight:600;color:var(--muted);margin-bottom:4px;display:flex;align-items:center;gap:5px;}
-    .chip{font-size:10px;padding:2px 6px;border-radius:999px;border:1px solid rgba(148,163,184,0.5);color:var(--muted);}
-    input[type=number]{padding:10px 10px;border-radius:10px;background:radial-gradient(circle at top,#020617,#020617 60%,#020617);border:1px solid rgba(148,163,184,0.4);color:#e5e7eb;font-weight:600;width:160px;font-size:14px;box-shadow:0 0 0 1px rgba(15,23,42,0.9);}
+    .top-row{
+      display:flex;justify-content:space-between;align-items:center;
+      gap:10px;margin-bottom:8px;flex-direction:row-reverse;
+    }
+    h1{
+      margin:0;font-size:18px;color:var(--accent-strong);
+      letter-spacing:.03em;display:flex;align-items:center;gap:6px;
+    }
+    .cipher-dot{
+      width:7px;height:7px;border-radius:999px;
+      background:var(--accent);box-shadow:0 0 12px rgba(34,197,94,0.9);
+      animation:pulse-dot 1.4s infinite;
+    }
+    @keyframes pulse-dot{
+      0%{transform:scale(1);opacity:0.9}
+      50%{transform:scale(1.4);opacity:0.3}
+      100%{transform:scale(1);opacity:0.9}
+    }
+    .status-pill{
+      display:inline-flex;align-items:center;gap:6px;
+      padding:4px 9px;border-radius:999px;
+      border:1px solid rgba(148,163,184,0.4);
+      background:linear-gradient(135deg,rgba(15,23,42,0.9),rgba(15,23,42,0.6));
+      font-size:11px;color:var(--muted);
+      flex-direction:row-reverse;
+    }
+    .status-dot{
+      width:8px;height:8px;border-radius:999px;
+      background:var(--accent);box-shadow:0 0 10px rgba(34,197,94,0.9);
+    }
+    .subtitle{
+      font-size:12px;color:var(--muted);margin-top:2px;line-height:1.6;
+      text-align:right;
+    }
+    .controls{
+      margin-top:12px;display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;
+      flex-direction:row-reverse;
+    }
+    label{
+      font-size:12px;font-weight:600;color:var(--muted);
+      margin-bottom:4px;display:flex;align-items:center;gap:5px;
+      justify-content:space-between;
+    }
+    .chip{
+      font-size:10px;padding:2px 6px;border-radius:999px;
+      border:1px solid rgba(148,163,184,0.5);color:var(--muted);
+    }
+    input[type=number]{
+      padding:10px 10px;border-radius:10px;
+      background:radial-gradient(circle at top,#020617,#020617 60%,#020617);
+      border:1px solid rgba(148,163,184,0.4);color:#e5e7eb;
+      font-weight:600;width:160px;font-size:14px;
+      box-shadow:0 0 0 1px rgba(15,23,42,0.9);
+      direction:ltr;
+    }
     input[type=number]::placeholder{color:#6b7280;font-weight:400;}
-    input:focus{outline:none;box-shadow:0 0 0 1px rgba(15,23,42,0.9),0 0 0 1px rgba(34,197,94,0.4),0 0 12px rgba(34,197,94,0.6);border-color:rgba(34,197,94,0.7);}
-    .btn{padding:10px 14px;border:none;border-radius:12px;background:radial-gradient(circle at top,#22c55e,#16a34a);color:#022c22;font-weight:750;cursor:pointer;font-size:14px;width:100%;letter-spacing:.02em;text-shadow:0 0 6px rgba(15,118,110,0.7);box-shadow:0 10px 30px rgba(34,197,94,0.35),0 0 18px rgba(22,163,74,0.7);position:relative;overflow:hidden;}
+    input:focus{
+      outline:none;
+      box-shadow:
+        0 0 0 1px rgba(15,23,42,0.9),
+        0 0 0 1px rgba(34,197,94,0.4),
+        0 0 12px rgba(34,197,94,0.6);
+      border-color:rgba(34,197,94,0.7);
+    }
+    .btn{
+      padding:10px 14px;border:none;border-radius:12px;
+      background:radial-gradient(circle at top,#22c55e,#16a34a);
+      color:#022c22;font-weight:750;cursor:pointer;font-size:14px;
+      width:100%;letter-spacing:.02em;
+      text-shadow:0 0 6px rgba(15,118,110,0.7);
+      box-shadow:0 10px 30px rgba(34,197,94,0.35),
+                 0 0 18px rgba(22,163,74,0.7);
+      position:relative;overflow:hidden;
+    }
     .btn span{position:relative;z-index:1;}
-    .btn::before{content:"";position:absolute;inset:-40%;background:conic-gradient(from 0deg,rgba(34,197,94,0.1),transparent,transparent,rgba(56,189,248,0.16),transparent);animation:spin 2.4s linear infinite;opacity:0.8;}
-    .btn::after{content:"";position:absolute;inset:2px;border-radius:10px;background:linear-gradient(180deg,#22c55e,#166534);}
+    .btn::before{
+      content:"";position:absolute;inset:-40%;
+      background:conic-gradient(from 0deg,rgba(34,197,94,0.1),transparent,transparent,rgba(56,189,248,0.16),transparent);
+      animation:spin 2.4s linear infinite;opacity:0.8;
+    }
+    .btn::after{
+      content:"";position:absolute;inset:2px;
+      border-radius:10px;background:linear-gradient(180deg,#22c55e,#166534);
+    }
     @keyframes spin{to{transform:rotate(360deg);}}
     .btn:disabled{opacity:0.6;cursor:not-allowed;box-shadow:none;}
-    .btn:active:not(:disabled){transform:translateY(1px);box-shadow:0 6px 18px rgba(34,197,94,0.28),0 0 8px rgba(22,163,74,0.5);}
-    .loader{display:none;margin-top:10px;padding:7px 10px;border-radius:10px;background:radial-gradient(circle at 0 0,rgba(34,197,94,0.18),transparent 70%);border:1px dashed rgba(34,197,94,0.5);font-size:12px;color:var(--muted);display:flex;align-items:center;justify-content:space-between;gap:10px;}
-    .loader-left{display:flex;align-items:center;gap:8px;}
-    .loader-dots{display:inline-flex;gap:4px;}
-    .loader-dot{width:5px;height:5px;border-radius:999px;background:var(--accent-strong);opacity:0.25;animation:loaderBlink 1s infinite alternate;}
+    .btn:active:not(:disabled){
+      transform:translateY(1px);
+      box-shadow:0 6px 18px rgba(34,197,94,0.28),
+                 0 0 8px rgba(22,163,74,0.5);
+    }
+    .loader{
+      display:none;margin-top:10px;padding:7px 10px;border-radius:10px;
+      background:radial-gradient(circle at 0 0,rgba(34,197,94,0.18),transparent 70%);
+      border:1px dashed rgba(34,197,94,0.5);
+      font-size:12px;color:var(--muted);
+      display:flex;align-items:center;justify-content:space-between;gap:10px;
+      flex-direction:row-reverse;
+    }
+    .loader-left{display:flex;align-items:center;gap:8px;flex-direction:row-reverse;}
+    .loader-dots{display:inline-flex;gap:4px;flex-direction:row-reverse;}
+    .loader-dot{
+      width:5px;height:5px;border-radius:999px;
+      background:var(--accent-strong);opacity:0.25;
+      animation:loaderBlink 1s infinite alternate;
+    }
     .loader-dot:nth-child(2){animation-delay:.2s;}
     .loader-dot:nth-child(3){animation-delay:.4s;}
-    @keyframes loaderBlink{0%{opacity:0.2;transform:translateY(0);}100%{opacity:1;transform:translateY(-2px);}}
-    .loader-tag{font-size:10px;padding:2px 6px;border-radius:999px;border:1px solid rgba(34,197,94,0.6);color:var(--accent-strong);background:rgba(15,23,42,0.7);}
-    .output{margin-top:14px;padding:12px 9px 6px;border-radius:14px;background:radial-gradient(circle at top,rgba(15,23,42,0.9),rgba(15,23,42,0.96));border:1px solid rgba(148,163,184,0.45);box-shadow:0 18px 50px rgba(0,0,0,0.8),0 0 18px rgba(15,23,42,0.9);display:none;}
-    .output-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;font-size:11px;color:var(--muted);}
-    .output-header-code{font-family:ui-monospace,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;font-size:11px;color:#9ca3af;background:#020617;padding:3px 6px;border-radius:999px;border:1px solid rgba(31,41,55,0.8);}
+    @keyframes loaderBlink{
+      0%{opacity:0.2;transform:translateY(0);}
+      100%{opacity:1;transform:translateY(-2px);}
+    }
+    .loader-tag{
+      font-size:10px;padding:2px 6px;border-radius:999px;
+      border:1px solid rgba(34,197,94,0.6);color:var(--accent-strong);
+      background:rgba(15,23,42,0.7);
+    }
+    .output{
+      margin-top:14px;padding:12px 9px 6px;border-radius:14px;
+      background:radial-gradient(circle at top,rgba(15,23,42,0.9),rgba(15,23,42,0.96));
+      border:1px solid rgba(148,163,184,0.45);
+      box-shadow:0 18px 50px rgba(0,0,0,0.8),
+                 0 0 18px rgba(15,23,42,0.9);
+      display:none;
+    }
+    .output-header{
+      display:flex;justify-content:space-between;align-items:center;
+      margin-bottom:6px;font-size:11px;color:var(--muted);
+      flex-direction:row-reverse;
+    }
+    .output-header-code{
+      font-family:ui-monospace,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+      font-size:11px;color:#9ca3af;background:#020617;
+      padding:3px 6px;border-radius:999px;
+      border:1px solid rgba(31,41,55,0.8);
+    }
     .list{display:flex;flex-direction:column;gap:8px;}
-    .item{padding:8px 9px;border-radius:12px;background:radial-gradient(circle at 0 0,rgba(34,197,94,0.08),rgba(15,23,42,0.98));border:1px solid rgba(148,163,184,0.55);display:flex;justify-content:space-between;align-items:center;gap:10px;position:relative;overflow:hidden;}
-    .item::before{content:"";position:absolute;inset:-2px;border-radius:inherit;border:1px solid transparent;background:linear-gradient(120deg,rgba(34,197,94,0.75),transparent,rgba(56,189,248,0.55)) border-box;-webkit-mask:linear-gradient(#000 0 0) padding-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;opacity:0;transition:opacity .18s ease-out;}
+    .item{
+      padding:8px 9px;border-radius:12px;
+      background:radial-gradient(circle at 0 0,rgba(34,197,94,0.08),rgba(15,23,42,0.98));
+      border:1px solid rgba(148,163,184,0.55);
+      display:flex;justify-content:space-between;align-items:center;gap:10px;
+      position:relative;overflow:hidden;
+      flex-direction:row-reverse;
+    }
+    .item::before{
+      content:"";position:absolute;inset:-2px;border-radius:inherit;
+      border:1px solid transparent;
+      background:linear-gradient(120deg,rgba(34,197,94,0.75),transparent,rgba(56,189,248,0.55)) border-box;
+      -webkit-mask:linear-gradient(#000 0 0) padding-box,linear-gradient(#000 0 0);
+      -webkit-mask-composite:xor;mask-composite:exclude;
+      opacity:0;transition:opacity .18s ease-out;
+    }
     .item:hover::before{opacity:0.26;}
-    .item-main{display:flex;flex-direction:column;gap:1px;}
+    .item-main{display:flex;flex-direction:column;gap:1px;text-align:right;}
     .label{font-size:14px;font-weight:800;color:#e5e7eb;}
-    .sub-label{font-size:11px;color:#9ca3af;font-family:ui-monospace,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;}
-    .meta{font-size:12px;color:#dbeafe;font-weight:700;background:var(--badge-bg);border-radius:999px;padding:3px 9px;white-space:nowrap;border:1px solid rgba(34,197,94,0.6);box-shadow:0 0 14px rgba(34,197,94,0.4);}
-    .footer{text-align:center;margin-top:6px;font-size:11px;color:var(--muted);font-family:ui-monospace,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;}
-    @media(max-width:600px){.wrap{padding:10px}.panel{padding:12px 10px 8px}h1{font-size:17px}.controls{flex-direction:column;align-items:stretch}input[type=number]{width:100%}.btn{width:100%;font-size:15px;padding:11px 14px}.item{padding:8px}.label{font-size:14px}.meta{font-size:11px;padding:3px 8px}}
+    .sub-label{
+      font-size:11px;color:#9ca3af;
+      font-family:ui-monospace,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+    }
+    .meta{
+      font-size:12px;color:#dbeafe;font-weight:700;
+      background:var(--badge-bg);border-radius:999px;
+      padding:3px 9px;white-space:nowrap;
+      border:1px solid rgba(34,197,94,0.6);
+      box-shadow:0 0 14px rgba(34,197,94,0.4);
+    }
+    .footer{
+      text-align:center;margin-top:6px;font-size:11px;color:var(--muted);
+      font-family:ui-monospace,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+    }
+    @media(max-width:600px){
+      .wrap{padding:10px}
+      .panel{padding:12px 10px 8px}
+      h1{font-size:17px}
+      .controls{flex-direction:column;align-items:stretch}
+      input[type=number]{width:100%}
+      .btn{width:100%;font-size:15px;padding:11px 14px}
+      .item{padding:8px}
+      .label{font-size:14px}
+      .meta{font-size:11px;padding:3px 8px}
+    }
   </style>
 </head>
 <body>
@@ -66,28 +242,38 @@
   <div class="panel">
     <div class="panel-inner">
       <div class="top-row">
-        <h1><span class="cipher-dot"></span> Bet Pattern Generator</h1>
-        <div class="status-pill"><span class="status-dot"></span><span>Pattern engine v1.4</span></div>
+        <h1><span class="cipher-dot"></span> مولّد أنماط الرهانات</h1>
+        <div class="status-pill">
+          <span class="status-dot"></span>
+          <span>محرك الأنماط v1.4</span>
+        </div>
       </div>
-      <div class="subtitle">Generate 5 different bet patterns from a single budget. If the total bet is high, only 1 spin is used on that line.</div>
+      <div class="subtitle">
+        أنشئ ٥ أنماط مختلفة للرهان من ميزانية واحدة. إذا كان إجمالي الرهان مرتفعًا، يتم استخدام دورة واحدة فقط في هذا السطر.
+      </div>
       <div class="controls">
         <div style="display:flex;flex-direction:column;width:100%;">
-          <label for="budget">Total budget (EUR) <span class="chip">5+ EUR</span></label>
+          <label for="budget">
+            <span>إجمالي الميزانية (EUR)</span>
+            <span class="chip">5+ EUR</span>
+          </label>
           <input id="budget" type="number" value="10" min="1" placeholder="50" />
         </div>
-        <button id="gen" class="btn"><span>Get strategy</span></button>
+        <button id="gen" class="btn"><span>احصل على الإستراتيجية</span></button>
       </div>
       <div id="loader" class="loader">
         <div class="loader-left">
-          <div class="loader-dots"><div class="loader-dot"></div><div class="loader-dot"></div><div class="loader-dot"></div></div>
-          <span>Calculating pattern…</span>
+          <div class="loader-dots">
+            <div class="loader-dot"></div><div class="loader-dot"></div><div class="loader-dot"></div>
+          </div>
+          <span>جاري حساب النمط…</span>
         </div>
-        <div class="loader-tag">SYSTEM: ACTIVE</div>
+        <div class="loader-tag">النظام: فعّال</div>
       </div>
       <div id="output" class="output">
         <div class="output-header">
-          <span>Last result</span>
-          <span class="output-header-code" id="sessionTag">SESSION #0000</span>
+          <span>آخر نتيجة</span>
+          <span class="output-header-code" id="sessionTag">الجلسة #0000</span>
         </div>
         <div id="list" class="list"></div>
         <div id="footer" class="footer"></div>
@@ -102,7 +288,7 @@
   var MIN_SPINS = 2;
   var MAX_SPINS = 7;
 
-  // Разрешённые ставки на сайте
+  // Список доступных ставок (в евро) с сайта
   var ALLOWED_BETS = [
     0.2, 0.4, 0.6, 0.8,
     1, 1.2, 1.4, 1.6, 1.8,
@@ -116,7 +302,7 @@
       .replace(/(\.\d)0$/,"$1");
   }
 
-  // 5 линий, каждая из ALLOWED_BETS, суммарно ≤ budget
+  // Генерация ٥ линий, каждая из ALLOWED_BETS, суммарно ≤ budget
   function computePattern(budget){
     var allowed = ALLOWED_BETS.slice().sort(function(a,b){return a-b;});
     var minAllowed = allowed[0];
@@ -126,13 +312,13 @@
     for (var i = 0; i < 5; i++){
       var remainingLines = 5 - i;
 
-      // чтобы на оставшиеся линии точно хватило минималок
+      // максимум на эту линию с учетом того, что на остальные хватит минималок
       var maxForThisLine = remaining - minAllowed * (remainingLines - 1);
       if (maxForThisLine < minAllowed){
         maxForThisLine = minAllowed;
       }
 
-      // выбираем все доступные ставки, которые не ломают баланс
+      // кандидаты, которые не ломают бюджет
       var candidates = allowed.filter(function(v){ return v <= maxForThisLine; });
       if (candidates.length === 0){
         candidates = [minAllowed];
@@ -163,24 +349,29 @@
     var footer = document.getElementById("footer");
     var sessionTag = document.getElementById("sessionTag");
     list.innerHTML = "";
-    sessionTag.textContent = "SESSION " + generateSessionId();
+    sessionTag.textContent = "الجلسة " + generateSessionId();
 
     for(var i=0;i<5;i++){
       var total = pattern[i];
       var spins = generateSpins(total);
       var div = document.createElement("div");
       div.className = "item";
+
       var main = document.createElement("div");
       main.className = "item-main";
+
       var label = document.createElement("div");
       label.className = "label";
-      label.textContent = "Total bet: " + formatAmount(total) + " " + CURRENCY;
+      label.textContent = "إجمالي الرهان: " + formatAmount(total) + " " + CURRENCY;
+
       var sub = document.createElement("div");
       sub.className = "sub-label";
-      sub.textContent = "line " + (i+1) + " — high-variance pattern";
+      sub.textContent = "السطر " + (i+1) + " — نمط عالي التذبذب";
+
       var meta = document.createElement("div");
       meta.className = "meta";
-      meta.textContent = "Spins: " + spins;
+      meta.textContent = "عدد الدورات: " + spins;
+
       main.appendChild(label);
       main.appendChild(sub);
       div.appendChild(main);
@@ -189,9 +380,12 @@
     }
 
     var sumAll = pattern.reduce(function(a,b){return a+b;},0);
+    var sumText = formatAmount(sumAll);
+    var budgetText = formatAmount(budget);
+
     footer.textContent =
-      "TOTAL DISTRIBUTED = " + formatAmount(sumAll) + " " + CURRENCY +
-      "   |   INPUT BUDGET = " + formatAmount(budget) + " " + CURRENCY;
+      "الإجمالي الموزَّع = " + sumText + " " + CURRENCY +
+      "   |   الميزانية المدخلة = " + budgetText + " " + CURRENCY;
 
     out.style.display = "block";
   }
@@ -200,13 +394,12 @@
   var loader = document.getElementById("loader");
   var output = document.getElementById("output");
 
-  // на всякий случай прячем лоадер при старте
   loader.style.display = "none";
 
   btn.addEventListener("click", function(){
     var budget = parseFloat(document.getElementById("budget").value) || 0;
     if(!isFinite(budget) || budget <= 0){
-      alert("Please enter a valid budget.");
+      alert("يرجى إدخال ميزانية صحيحة.");
       return;
     }
 
