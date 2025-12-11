@@ -102,7 +102,7 @@
   var MIN_SPINS = 2;
   var MAX_SPINS = 7;
 
-  // Доступные суммы на сайте
+  // Разрешённые ставки на сайте
   var ALLOWED_BETS = [
     0.2, 0.4, 0.6, 0.8,
     1, 1.2, 1.4, 1.6, 1.8,
@@ -116,6 +116,36 @@
       .replace(/(\.\d)0$/,"$1");
   }
 
+  // 5 линий, каждая из ALLOWED_BETS, суммарно ≤ budget
+  function computePattern(budget){
+    var allowed = ALLOWED_BETS.slice().sort(function(a,b){return a-b;});
+    var minAllowed = allowed[0];
+    var pattern = [];
+    var remaining = budget;
+
+    for (var i = 0; i < 5; i++){
+      var remainingLines = 5 - i;
+
+      // чтобы на оставшиеся линии точно хватило минималок
+      var maxForThisLine = remaining - minAllowed * (remainingLines - 1);
+      if (maxForThisLine < minAllowed){
+        maxForThisLine = minAllowed;
+      }
+
+      // выбираем все доступные ставки, которые не ломают баланс
+      var candidates = allowed.filter(function(v){ return v <= maxForThisLine; });
+      if (candidates.length === 0){
+        candidates = [minAllowed];
+      }
+
+      var bet = candidates[Math.floor(Math.random() * candidates.length)];
+      pattern.push(bet);
+      remaining -= bet;
+    }
+
+    return pattern;
+  }
+
   function generateSpins(sum){
     if(sum > HIGH_BET_THRESHOLD) return 1;
     return Math.floor(Math.random() * (MAX_SPINS - MIN_SPINS + 1)) + MIN_SPINS;
@@ -125,36 +155,6 @@
     var now = Date.now().toString(16).slice(-4);
     var rand = Math.floor(Math.random()*4096).toString(16).padStart(3,"0");
     return "#"+now.toUpperCase()+"-"+rand.toUpperCase();
-  }
-
-  // Генерация 5 линий из списка ALLOWED_BETS с суммой ≤ budget
-  function computePattern(budget){
-    var allowed = ALLOWED_BETS.slice().sort(function(a,b){return a-b;});
-    var minAllowed = allowed[0];
-    var pattern = [];
-    var usedBudget = 0;
-
-    for (var i = 0; i < 5; i++){
-      var remainingLines = 5 - i;
-      var remainingBudget = budget - usedBudget;
-
-      // максимальная ставка на эту линию, чтобы хватило на остальные
-      var maxForThisLine = remainingBudget - minAllowed * (remainingLines - 1);
-
-      if (maxForThisLine < minAllowed){
-        maxForThisLine = minAllowed;
-      }
-
-      var candidates = allowed.filter(function(v){ return v <= maxForThisLine; });
-      if (candidates.length === 0){
-        candidates = [minAllowed];
-      }
-
-      var bet = candidates[Math.floor(Math.random() * candidates.length)];
-      pattern.push(bet);
-      usedBudget += bet;
-    }
-    return pattern;
   }
 
   function render(pattern, budget){
@@ -189,10 +189,10 @@
     }
 
     var sumAll = pattern.reduce(function(a,b){return a+b;},0);
-    var sumText = formatAmount(sumAll);
-    var budgetText = formatAmount(budget);
+    footer.textContent =
+      "TOTAL DISTRIBUTED = " + formatAmount(sumAll) + " " + CURRENCY +
+      "   |   INPUT BUDGET = " + formatAmount(budget) + " " + CURRENCY;
 
-    footer.textContent = "TOTAL DISTRIBUTED = " + sumText + " " + CURRENCY + "   |   INPUT BUDGET = " + budgetText + " " + CURRENCY;
     out.style.display = "block";
   }
 
@@ -200,11 +200,13 @@
   var loader = document.getElementById("loader");
   var output = document.getElementById("output");
 
+  // на всякий случай прячем лоадер при старте
+  loader.style.display = "none";
+
   btn.addEventListener("click", function(){
     var budget = parseFloat(document.getElementById("budget").value) || 0;
-
-    if(!isFinite(budget) || budget < 5){
-      alert("Please enter a budget of at least 5 EUR.");
+    if(!isFinite(budget) || budget <= 0){
+      alert("Please enter a valid budget.");
       return;
     }
 
