@@ -698,7 +698,7 @@
       <!-- SCREEN 2: GENERATOR -->
       <div id="screen-generator" class="screen">
         <div class="subtitle">
-          أنشئ <span>٥ أنماط مختلفة</span> من ميزانية واحدة. إذا كان مجموع الرهان أكبر من 2 EUR فسيتم استخدام <span>لفة واحدة فقط</span> في هذا الصف.
+          أنشئ <span>٥ أنماط مختلفة</span> من ميزانية واحدة. إذا كان مجموع الرهان أكبر من 2.4 EUR فسيتم استخدام <span>لفة واحدة فقط</span> في هذا الصف.
         </div>
 
         <div class="current-game">
@@ -856,7 +856,7 @@
   }
 
   function generateSpins(sum){
-    if (sum > 2) return 1;
+    if (sum > 2.4) return 1;
     const min = 2;
     const max = 7;
     return Math.floor(Math.random()*(max - min + 1)) + min;
